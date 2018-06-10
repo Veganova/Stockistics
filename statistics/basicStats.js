@@ -20,22 +20,17 @@ var maxDiff = (records) => {
 };
 
 
-var filterByMinFractionDiff = function(records) {
-    var frac = 0.05;
-
+var percentageChange = function(records) {
     let results = [];
-    // TODO USE FILTER AND MAP ISNTEAD OF LOOP AND CONTINUE
     for (let date in records) {
-        let obj = records[date];
-        let curDiff = reader.getHighest(obj) - reader.getLowest(obj);
-        let fracChange = curDiff / reader.getLowest(obj);
-        if (fracChange > frac)  {
-            // Decimal precision hard set here
-            let percentageChange = (fracChange * 100).toFixed(DECIMAL_PRECISION);
-            results.push({date, obj, percentageChange});
-        }
+        let data = records[date];
+        let curDiff = reader.getHighest(data) - reader.getLowest(data);
+        let fracChange = curDiff / reader.getLowest(data);
+        // Decimal precision hard set here
+        let percentageChange = (fracChange * 100).toFixed(DECIMAL_PRECISION);
+        results.push({date, data, percentageChange});
     }
     return results;
 };
 
-module.exports = {maxDiff, filterByMinFractionDiff};
+module.exports = {maxDiff, percentageChange};

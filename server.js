@@ -1,13 +1,34 @@
 var basicStats = require('./statistics/basicStats');
-// var timeSeries = require('./Retrieve/timeSeries');
 var alpha = require('./retrieve/alphavantageReader');
-var u = require('./util');
-let date = '2018-05-08';
-var av = new alpha.AlphaAvantage('GOOGL', (av) => {
-    console.log(av.focus('monthly').getClosestLastDate(date));
-    console.log('records', Object.keys(av.data).length);
-    console.log('range', av.getDataInRange('2018-03', '2018-05-31'));
-    // console.log(basicStats.filterByMinFractionDiff(av.data));
-});
+var emailer = require('./email/emailer');
+
+var symbols = ['GOOGL', 'AAPL', 'MU'];
+var type = 'weekly';
+var minPercentage = 3.5;
+var processed = 0;
+var result = {
+    minPercentage: minPercentage,
+    dataType: type,
+    symbolsConsidered: symbols,
+    goodStocks: {}
+};
+for (let i = 0; i < symbols.length; i++) {
+    var av = new alpha.AlphaAvantage(symbols[i], (av) => {
+        av.focus(type);
+        let withPercents = basicStats.percentageChange(av.getDataInRange());
+        const filtered = withPercents.filter((record) => record.percentageChange > minPercentage);
+        if (filtered.length > 0) {
+            result.goodStocks[symbols[i]] = filtered;
+        }
+        processed += 1;
+        checkDone();
+    });
+}
+
+function checkDone() {
+    if (processed === symbols.length) {
+        emailer.email(result);
+    }
+}
 
 
