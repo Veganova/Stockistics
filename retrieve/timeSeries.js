@@ -1,6 +1,6 @@
 var request = require('request');
-var statUtil = require('./../Statistics/statUtil');
-var formatter = require('./../alphavantageReader');
+var statUtil = require('../statistics/statUtil');
+var formatter = require('./alphavantageReader');
 
 var API_KEY = 'GS3QITA1XLMESBNL';
 

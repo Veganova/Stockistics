@@ -1,4 +1,4 @@
-var reader = require('./../alphavantageReader');
+var reader = require('../retrieve/alphavantageReader');
 var DECIMAL_PRECISION = 4;
 
 var maxDiff = (records) => {

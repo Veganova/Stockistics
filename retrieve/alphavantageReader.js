@@ -1,5 +1,5 @@
 const request = require('request');
-const util = require('./util');
+const util = require('../util');
 
 
 const API_KEY = 'GS3QITA1XLMESBNL';
@@ -144,7 +144,7 @@ class AlphaVantage {
             }
             return date;
         }
-        throw 'Invalid type';
+        throw 'Invalid type in getClosestLastDate';
     }
 
     /**
@@ -159,6 +159,7 @@ class AlphaVantage {
                 return this;
             }
         }
+        throw 'Invalid type in focus';
     }
 
     initData(type) {
@@ -173,6 +174,31 @@ class AlphaVantage {
                 .catch((e) => console.log(e));
         });
 
+    }
+
+    /**
+     * Gets all the data between the two dates.
+     * @param startDateString   string: beginning of the range of dates to retrieve the data from. Inclusive.
+     * If not specified just return the last data point.
+     * @param endDateString     string: later end of the range of dates to retrieve the data from. Inclusive.
+     * If not specified it will use today's date.
+     * @param type              If reader is not focused, use this type.
+     */
+    getDataInRange(startDateString, endDateString, typeP) {
+        let result = {};
+        let type = typeP ? typeP : this.type;
+        let startDate = startDateString ? util.getDate(startDateString) : util.getDate(this.timeSeries[type].lastDate);
+        let endDate = endDateString ? util.getDate(endDateString) : util.getDate(new Date());
+        let data = this.timeSeries[type].data;
+
+
+        for (let date in data) {
+            let curDate = util.getDate(date);
+            if (curDate < endDate && curDate > startDate || dateEquals(curDate, endDate) || dateEquals(curDate, startDate)) {
+                result[date] = data[date];
+            }
+        }
+        return result;
     }
 }
 
