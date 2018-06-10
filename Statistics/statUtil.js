@@ -15,11 +15,13 @@ module.exports = {
         if (!(date instanceof Date)) {
             date = new Date(date);
         }
-        let currentMonthLastDate = new Date(date.getFullYear(), date.getMonth() + 1, 0)
-        if (dateEquals(date, currentMonthLastDate)) {
-            // Case where the date passed in is a valid date
+        let currentMonthLastDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        if (dateEquals(new Date(), date) || dateEquals(date, currentMonthLastDate)) {
+            // Case where the date passed in is a valid date and doesn't need to be transposed to a previous month end date.
             return date;
         }
         return new Date(date.getFullYear(), date.getMonth(), 0);
     }
+   //  first make this logic work directly with the query instead of stringly pass around. Current problem is that the present lastest data for monthly is unknown value
+   // do the same thing for week
 };

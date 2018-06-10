@@ -1,5 +1,8 @@
 var request = require('request');
 var statUtil = require('./../Statistics/statUtil');
+var formatter = require('./../alphavantageReader');
+
+var API_KEY = 'GS3QITA1XLMESBNL';
 
 /**
  * Provides the filtered result from a TIME_SERIES_XXX set of periodic stock data.
@@ -21,7 +24,7 @@ var getTimeSeries = (minDate, type, symbol) => {
         }
 
         let options = {
-            url: `https://www.alphavantage.co/query?function=${functionType}&symbol=${symbol}&apikey=GS3QITA1XLMESBNL`,
+            url: `https://www.alphavantage.co/query?function=${functionType}&symbol=${symbol}&apikey=${API_KEY}`,
             json: true //convert data that request callback gets back to a json object.
         };
 
@@ -58,7 +61,7 @@ var getTimeRecord = (date, type, symbol) => {
     return new Promise((resolve, reject) => {
         let functionType, bodyDataKey, targetDate;
 
-        targetDate = statUtil.getLastDayOfMonth(date);
+        targetDate = formatter.dateToDateString(statUtil.getLastDayOfMonth(date));
 
         if (type.toUpperCase() === 'MONTHLY') {
             functionType = 'TIME_SERIES_MONTHLY';
@@ -69,7 +72,7 @@ var getTimeRecord = (date, type, symbol) => {
         }
 
         let options = {
-            url: `https://www.alphavantage.co/query?function=${functionType}&symbol=${symbol}&apikey=GS3QITA1XLMESBNL`,
+            url: `https://www.alphavantage.co/query?function=${functionType}&symbol=${symbol}&apikey=${API_KEY}`,
             json: true //convert data that request callback gets back to a json object.
         };
 
@@ -80,7 +83,9 @@ var getTimeRecord = (date, type, symbol) => {
             if (error) {
                 reject(error);
             } else {
-                resolve(body[bodyDataKey][targetDate]);
+                let result = {};
+                result[targetDate] = body[bodyDataKey][targetDate];
+                resolve(result);
             }
 
         });
