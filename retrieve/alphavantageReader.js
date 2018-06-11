@@ -1,5 +1,5 @@
 const request = require('request');
-const util = require('../util');
+const util = require('../utils/util');
 
 
 const API_KEY = 'GS3QITA1XLMESBNL';

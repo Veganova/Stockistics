@@ -23,12 +23,12 @@ var maxDiff = (records) => {
 var percentageChange = function(records) {
     let results = [];
     for (let date in records) {
-        let data = records[date];
-        let curDiff = reader.getHighest(data) - reader.getLowest(data);
-        let fracChange = curDiff / reader.getLowest(data);
+        let record = records[date];
+        let curDiff = reader.getHighest(record) - reader.getLowest(record);
+        let fracChange = curDiff / reader.getLowest(record);
         // Decimal precision hard set here
         let percentageChange = (fracChange * 100).toFixed(DECIMAL_PRECISION);
-        results.push({date, data, percentageChange});
+        results.push({date, record, percentageChange});
     }
     return results;
 };
