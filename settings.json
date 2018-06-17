@@ -1,0 +1,5 @@
+{
+  "type"          : "weekly",
+  "minPercentage" : 4,
+  "minStockValue" : 50.0
+}

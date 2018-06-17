@@ -10,14 +10,14 @@ var transporter = nodemailer.createTransport({
 });
 
 module.exports = {
-    email : (data) => {
+    email : (AVR, data) => {
         let today = util.getDate(new Date());
         let receivers = ['virajnova@gmail.com', 'virajnovatest@gmail.com']
         let mailOptions = {
             from: 'stockistics.reporter@gmail.com',
             to: receivers,
             subject: 'Stock report ' + today,
-            text: JSON.stringify(data, null, 2)
+            html: util.formatHTML(AVR, data)
         };
 
         transporter.sendMail(mailOptions, function(error, info){

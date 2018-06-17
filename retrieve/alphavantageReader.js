@@ -2,7 +2,7 @@ const request = require('request');
 const util = require('../utils/util');
 
 
-const API_KEY = 'GS3QITA1XLMESBNL';
+const API_KEY = '0QYXGMP5D6YNR9I1';//'GS3QITA1XLMESBNL';
 
 function getTimeSeriesData(symbol, functionType, bodyDataKey) {
     return new Promise((resolve, reject) => {
@@ -13,9 +13,10 @@ function getTimeSeriesData(symbol, functionType, bodyDataKey) {
 
         console.log(options.url);
         request(options, function (error, response, body) {
-            if (error) {
-                reject(error);
+            if (!body[bodyDataKey]) {
+                reject(body);
             } else {
+                console.log(body[bodyDataKey]["2018-06-15"]);
                 resolve(body[bodyDataKey]);
             }
         });
@@ -66,10 +67,10 @@ function getLatestDate(data) {
 }
 
 /**
- * Object that stores all the information currently available on a stock. Default focus on weekly.
+ * Object that stores all the information currently available on a stock. Provide the type of timeSeries to load (ex daily, weekly)
  */
 class AlphaVantage {
-    constructor(symbol, callback) {
+    constructor(symbol, typeToLoad, callback) {
         this.symbol = symbol;
         this.loaded = 0;
 
@@ -88,19 +89,20 @@ class AlphaVantage {
             },
         };
 
-        for (let key in this.timeSeries) {
-            this.initData(key).then((type)  => {
-                this.loaded += 1;
-                this.checkIfAllLoaded(callback);
-            });
-        }
+        this.initData(typeToLoad).then((type)  => {
+            this.loaded += 1;
+            this.checkIfAllLoaded(callback);
+        }).catch((e) => {
+            console.log(e);
+        });
 
 
         //
     }
 
     checkIfAllLoaded(callback) {
-        if (this.loaded === Object.keys(this.timeSeries).length) {
+        // Temporarily restricting this logic to only load one type to allow API limits (1request/second)
+        if (this.loaded === 1) {//Object.keys(this.timeSeries).length) {
             callback(this);
         }
     }
@@ -203,6 +205,11 @@ class AlphaVantage {
 
 
 module.exports = {
+
+    getOpen : (jsonObj) => {
+        return jsonObj['1. open'];
+    },
+
     getHighest : (jsonObj) => {
         return jsonObj['2. high'];
     },
@@ -211,6 +218,13 @@ module.exports = {
         return jsonObj['3. low'];
     },
 
+    getClose : (jsonObj) => {
+        return jsonObj['4. close'];
+    },
+
+    getVolume : (jsonObj) => {
+        return jsonObj['5. volume'];
+    },
     /**
      * Assumes passed in date is of type Date
      */
